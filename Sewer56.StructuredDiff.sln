@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sewer56.StructuredDiff", "Sewer56.StructuredDiff\Sewer56.StructuredDiff.csproj", "{8E4FA335-34B2-4305-926D-9D5136133413}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sewer56.StructuredDiff.Tests", "Sewer56.StructuredDiff.Tests\Sewer56.StructuredDiff.Tests.csproj", "{5F2F10C2-0AB2-482C-A3F0-B4E687456C2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sewer56.StructuredDiff.Benchmarks", "Sewer56.StructuredDiff.Benchmarks\Sewer56.StructuredDiff.Benchmarks.csproj", "{1B5DA9CE-C486-476C-939A-34D900499607}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E4FA335-34B2-4305-926D-9D5136133413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E4FA335-34B2-4305-926D-9D5136133413}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E4FA335-34B2-4305-926D-9D5136133413}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E4FA335-34B2-4305-926D-9D5136133413}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F2F10C2-0AB2-482C-A3F0-B4E687456C2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F2F10C2-0AB2-482C-A3F0-B4E687456C2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F2F10C2-0AB2-482C-A3F0-B4E687456C2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F2F10C2-0AB2-482C-A3F0-B4E687456C2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B5DA9CE-C486-476C-939A-34D900499607}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B5DA9CE-C486-476C-939A-34D900499607}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B5DA9CE-C486-476C-939A-34D900499607}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B5DA9CE-C486-476C-939A-34D900499607}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
