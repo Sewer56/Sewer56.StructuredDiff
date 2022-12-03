@@ -2,6 +2,8 @@
 
 A diff algorithm for creating diffs of binary data with known structure.  
 
+![Nuget](https://img.shields.io/nuget/v/Sewer56.StructuredDiff)
+
 ## The Problem
 
 Suppose one field in a struct is an uint (u32), and you want to create a set of patches that will turn one version of the data into a slightly modified version of the same data.  
