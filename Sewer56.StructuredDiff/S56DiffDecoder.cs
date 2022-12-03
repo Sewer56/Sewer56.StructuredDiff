@@ -8,12 +8,13 @@ public unsafe class S56DiffDecoder
     /// <summary>
     /// Encodes a patch that converts source to target.
     /// </summary>
-    /// <param name="source">The source data to create diff from.</param>
+    /// <param name="source">The source data to apply diff to.</param>
     /// <param name="patch">The target data to diff into.</param>
     /// <param name="destination">Where the new file will be written out to.</param>
     /// <param name="patchLength">Length of the patch data.</param>
+    /// <param name="numBytesWritten">Number of bytes written to <paramref name="destination"/>.</param>
     /// <returns>Number of bytes decoded.</returns>
-    public static nuint Decode(byte* source, byte* patch, byte* destination, nuint patchLength)
+    public static nuint Decode(byte* source, byte* patch, byte* destination, nuint patchLength, out nuint numBytesWritten)
     {
         var destinationPtr = destination;
         var sourcePtr      = source;
@@ -41,6 +42,7 @@ public unsafe class S56DiffDecoder
             }
         }
 
+        numBytesWritten = (nuint)(destinationPtr - destination);
         return (nuint)(patchPtr - patch);
     }
 

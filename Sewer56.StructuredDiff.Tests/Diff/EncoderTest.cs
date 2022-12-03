@@ -26,10 +26,11 @@ public unsafe class EncoderTest
         fixed (byte* destinationPtr = &destination[0])
         {
             var numEncoded = S56DiffEncoder.Encode(beforePtr, afterPtr, destinationPtr, (nuint)before.Length, (nuint)after.Length);
-            var numDecoded = S56DiffDecoder.Decode(beforePtr, destinationPtr, decodedPtr, numEncoded);
+            var numDecoded = S56DiffDecoder.Decode(beforePtr, destinationPtr, decodedPtr, numEncoded, out var numBytesInDestination);
             _testOutputHelper.WriteLine($"Encoded: {numEncoded}");
             Assert.Equal(numEncoded, numDecoded);
             Assert.Equal(after, decoded);
+            Assert.Equal((nuint)after.Length, numBytesInDestination);
         }
     }
     
@@ -47,10 +48,11 @@ public unsafe class EncoderTest
         fixed (byte* destinationPtr = &destination[0])
         {
             var numEncoded = S56DiffEncoder.Encode(beforePtr, afterPtr, destinationPtr, (nuint)before.Length, (nuint)after.Length);
-            var numDecoded = S56DiffDecoder.Decode(beforePtr, destinationPtr, decodedPtr, numEncoded);
+            var numDecoded = S56DiffDecoder.Decode(beforePtr, destinationPtr, decodedPtr, numEncoded, out var numBytesInDestination);
             _testOutputHelper.WriteLine($"Encoded: {numEncoded}");
             Assert.Equal(numEncoded, numDecoded);
             Assert.Equal(after, decoded);
+            Assert.Equal((nuint)after.Length, numBytesInDestination);
         }
     }
     
@@ -68,10 +70,11 @@ public unsafe class EncoderTest
         fixed (byte* destinationPtr = &destination[0])
         {
             var numEncoded = S56DiffEncoder.Encode(beforePtr, afterPtr, destinationPtr, (nuint)before.Length, (nuint)after.Length, new FourByteResolver());
-            var numDecoded = S56DiffDecoder.Decode(beforePtr, destinationPtr, decodedPtr, numEncoded);
+            var numDecoded = S56DiffDecoder.Decode(beforePtr, destinationPtr, decodedPtr, numEncoded, out var numBytesInDestination);
             _testOutputHelper.WriteLine($"Encoded: {numEncoded}");
             Assert.Equal(numEncoded, numDecoded);
             Assert.Equal(after, decoded);
+            Assert.Equal((nuint)after.Length, numBytesInDestination);
         }
     }
 

@@ -39,6 +39,6 @@ public class ApplyDiff
     [Benchmark]
     public unsafe nuint Apply()
     {
-        return S56DiffDecoder.Decode((byte*)_orig.AddrOfPinnedObject(), (byte*)_ptch.AddrOfPinnedObject(), (byte*)_tgt.AddrOfPinnedObject(), _ptchNumBytes);
+        return S56DiffDecoder.Decode((byte*)_orig.AddrOfPinnedObject(), (byte*)_ptch.AddrOfPinnedObject(), (byte*)_tgt.AddrOfPinnedObject(), _ptchNumBytes, out _);
     }
 }
