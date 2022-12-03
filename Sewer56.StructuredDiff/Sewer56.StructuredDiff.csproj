@@ -5,6 +5,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <IsTrimmable>true</IsTrimmable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Sewer's Structured Binary Diff Library</Title>
+        <Authors>Sewer56</Authors>
+        <Description>A diff algorithm for creating diffs of binary data with known structure, allowing you to enforce alignment and field size rules.</Description>
+        <PackageProjectUrl>https://github.com/Sewer56/Sewer56.StructuredDiff</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/Sewer56/Sewer56.StructuredDiff/blob/main/LICENSE.md</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/Sewer56/Sewer56.StructuredDiff</RepositoryUrl>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
 </Project>
