@@ -79,7 +79,7 @@ public unsafe class S56DiffDecoder
     /// </summary>
     /// <param name="data">Pointer where the opcode should be read from.</param>
     /// <param name="dataPtr">Pointer to where the data starts.</param>
-    /// <param name="numToCopy">Number of bytes to copy from <see cref="dataPtr"/>.</param>
+    /// <param name="numToCopy">Number of bytes to copy from <paramref name="dataPtr"/>.</param>
     /// <returns>Number of bytes read from data.</returns>
     public static nuint DecodeCopy(byte* data, out byte* dataPtr, out nuint numToCopy)
     {
