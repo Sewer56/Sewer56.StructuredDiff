@@ -17,6 +17,68 @@ However when you apply the diff of Mod B, which changes bytes 0, 2 & 3, you get 
 This preserves the modified byte from Mod A, which may sometimes be undesirable.  
 As such, this diff algorithm avoids the problem by replacing *the entire u32* provided the size of the field is known.  
 
+## Usage
+
+Example taken from Unit Tests:  
+
+```csharp
+var before      = File.ReadAllBytes(Assets.SkillBefore);
+var after       = File.ReadAllBytes(Assets.SkillAfter);
+var decoded     = new byte[after.Length];
+var destination = new byte[S56DiffEncoder.CalculateMaxDestinationLength(after.Length)];
+        
+fixed (byte* beforePtr = &before[0])
+fixed (byte* afterPtr = &after[0])
+fixed (byte* decodedPtr = &decoded[0])
+fixed (byte* destinationPtr = &destination[0])
+{
+    var numEncoded = S56DiffEncoder.Encode(beforePtr, afterPtr, destinationPtr, (nuint)before.Length, (nuint)after.Length, new FourByteResolver());
+    var numDecoded = S56DiffDecoder.Decode(beforePtr, destinationPtr, decodedPtr, numEncoded);
+    Assert.Equal(numEncoded, numDecoded);
+    Assert.Equal(after, decoded);
+}
+
+// Example Resolver, for an array of u32s.
+private struct FourByteResolver : IEncoderFieldResolver
+{
+    public bool Resolve(nuint offset, out int moveBy, out int length)
+    {
+        var fourByteAligned = offset / 4 * 4;
+        moveBy = (int)(offset - fourByteAligned);
+        length = 4;
+        return true;
+    }
+}
+```
+
+For big structures, might be helpful to use `OffsetRangeSelector`:  
+
+```csharp
+private struct StructResolver : IEncoderFieldResolver
+{
+    private static OffsetRangeSelector Selector = new OffsetRangeSelector(new OffsetRange[]
+    {
+        new (0, 3),   // int
+        new (4, 5),   // short
+        new (6, 7),   // short
+        new (8, 8),   // byte
+        new (9, 9),   // byte
+        new (10, 10), // byte
+        new (11, 11), // byte
+        // ... some more 
+    });
+    
+    public bool Resolve(nuint offset, out int moveBy, out int length)
+    {
+        // OffsetRangeSelector can perform binary search, as long as input ranges are valid (sorted, joined, no overlaps).
+        var range = selector.Offsets[selector.SelectBinarySearch(6)]; // Search for range that fits offset 6
+        moveBy = offset - range.Start;
+        length = range.Length;
+        return true;
+    }
+}
+```
+
 ## Encoding Scheme
 
 ```
