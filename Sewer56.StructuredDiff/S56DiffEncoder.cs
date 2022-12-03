@@ -2,6 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
+using Sewer56.StructuredDiff.Interfaces;
 
 [assembly:InternalsVisibleTo("Sewer56.StructuredDiff.Tests")]
 namespace Sewer56.StructuredDiff;
@@ -14,7 +15,7 @@ public unsafe class S56DiffEncoder
     /* See Readme for How Algorithm Works */
 
     /// <summary>
-    /// Encodes a patch that converts source to target.
+    /// Encodes a patch that converts source to target, without structural awareness (default resolver).
     /// </summary>
     /// <param name="source">The source data to create diff from.</param>
     /// <param name="target">The target data to diff into.</param>
@@ -23,6 +24,21 @@ public unsafe class S56DiffEncoder
     /// <param name="targetLength">Length of the target array.</param>
     /// <returns>Number of bytes encoded.</returns>
     public static nuint Encode(byte* source, byte* target, byte* destination, nuint sourceLength, nuint targetLength)
+    {
+        return Encode(source, target, destination, sourceLength, targetLength, new UnstructuredResolver());
+    }
+
+    /// <summary>
+    /// Encodes a patch that converts source to target.
+    /// </summary>
+    /// <param name="source">The source data to create diff from.</param>
+    /// <param name="target">The target data to diff into.</param>
+    /// <param name="destination">Where the diff patch will be written out to.</param>
+    /// <param name="sourceLength">Length of the source array.</param>
+    /// <param name="targetLength">Length of the target array.</param>
+    /// <param name="resolver">Address resolver used for structural awareness.</param>
+    /// <returns>Number of bytes encoded.</returns>
+    public static nuint Encode<T>(byte* source, byte* target, byte* destination, nuint sourceLength, nuint targetLength, T resolver) where T : IEncoderFieldResolver
     {
         var sourcePtr = source;
         var targetPtr = target;
@@ -34,24 +50,65 @@ public unsafe class S56DiffEncoder
         while (bytesLeft > 0)
         {
             var match = FindLongestMatch(sourcePtr, targetPtr, bytesLeft);
-            if (match > 0)
+            
+            // There is no more bytes to decode.
+            if (bytesLeft - match <= 0)
             {
                 destinationPtr += EncodeSkip(match, destinationPtr);
-                sourcePtr += match;
                 targetPtr += match;
-                bytesLeft -= match;
-            }
-            
-            if (bytesLeft <= 0)
                 break;
-            
-            match = FindLongestMismatch(sourcePtr, targetPtr, bytesLeft);
+            }
+
             if (match > 0)
             {
-                destinationPtr += EncodeCopy(targetPtr, match, destinationPtr);
-                sourcePtr += match;
-                targetPtr += match;
-                bytesLeft -= match;
+                if (resolver.Resolve((nuint)(targetPtr - target) + match, out int moveBy, out int length))
+                {
+                    match -= (nuint)moveBy;
+                    
+                    // Encode a skip then length for our mismatch.
+                    if (match > 0)
+                    {
+                        destinationPtr += EncodeSkip(match, destinationPtr);
+                        sourcePtr += match;
+                        targetPtr += match;
+                        bytesLeft -= match;
+                    }
+                    
+                    destinationPtr += EncodeCopy(targetPtr, (nuint)length, destinationPtr);
+                    sourcePtr += length;
+                    targetPtr += length;
+                    bytesLeft -= (nuint)length;
+                }
+                else
+                {
+                    // Unstructured
+                    destinationPtr += EncodeSkip(match, destinationPtr);
+                    sourcePtr += match;
+                    targetPtr += match;
+                    bytesLeft -= match;
+                }
+            }
+
+            var misMatch = FindLongestMismatch(sourcePtr, targetPtr, bytesLeft);
+            if (misMatch > 0)
+            {
+                if (resolver.Resolve((nuint)(targetPtr - target) + misMatch, out _, out int length))
+                {
+                    // Note: Ignoring MoveBy here is *not* a bug. Alignment with field is guaranteed from previous write
+                    //       inside match > 0 above.
+                    destinationPtr += EncodeCopy(targetPtr, (nuint)length, destinationPtr);
+                    sourcePtr += length;
+                    targetPtr += length;
+                    bytesLeft -= (nuint)length;
+                }
+                else
+                {
+                    // Unstructured
+                    destinationPtr += EncodeCopy(targetPtr, misMatch, destinationPtr);
+                    sourcePtr += misMatch;
+                    targetPtr += misMatch;
+                    bytesLeft -= misMatch;
+                }
             }
         }
 
@@ -452,5 +509,15 @@ public unsafe class S56DiffEncoder
         }
 
         return result;
+    }
+    
+    private struct UnstructuredResolver : IEncoderFieldResolver
+    {
+        public bool Resolve(nuint offset, out int moveBy, out int length)
+        {
+            moveBy = 0;
+            length = -1;
+            return false;
+        }
     }
 }

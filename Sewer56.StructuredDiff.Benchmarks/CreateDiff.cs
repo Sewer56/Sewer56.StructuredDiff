@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using BenchmarkDotNet.Attributes;
+using Sewer56.StructuredDiff.Interfaces;
 using Sewer56.StructuredDiff.Tests;
 
 namespace Sewer56.StructuredDiff.Benchmarks;
@@ -35,5 +36,22 @@ public class CreateDiff
     public unsafe nuint Create()
     {
         return S56DiffEncoder.Encode((byte*)_orig.AddrOfPinnedObject(), (byte*)_tgt.AddrOfPinnedObject(), (byte*)_dst.AddrOfPinnedObject(), (nuint)_origArr.Length, (nuint)_tgtArr.Length);
+    }
+    
+    [Benchmark]
+    public unsafe nuint Create4ByteStructured()
+    {
+        return S56DiffEncoder.Encode((byte*)_orig.AddrOfPinnedObject(), (byte*)_tgt.AddrOfPinnedObject(), (byte*)_dst.AddrOfPinnedObject(), (nuint)_origArr.Length, (nuint)_tgtArr.Length, new FourByteResolver());
+    }
+    
+    private struct FourByteResolver : IEncoderFieldResolver
+    {
+        public bool Resolve(nuint offset, out int moveBy, out int length)
+        {
+            var fourByteAligned = offset / 4 * 4;
+            moveBy = (int)(offset - fourByteAligned);
+            length = 4;
+            return true;
+        }
     }
 }
