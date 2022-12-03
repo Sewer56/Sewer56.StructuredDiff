@@ -14,6 +14,7 @@
         <PackageLicenseUrl>https://github.com/Sewer56/Sewer56.StructuredDiff/blob/main/LICENSE.md</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/Sewer56/Sewer56.StructuredDiff</RepositoryUrl>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
 </Project>
